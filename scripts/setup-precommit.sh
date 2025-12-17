@@ -10,7 +10,11 @@ echo "🚀 Setting up pre-commit hooks for Spring PetClinic..."
 # Check if pre-commit is installed
 if ! command -v pre-commit &> /dev/null; then
     echo "📦 Installing pre-commit..."
-    pip install pre-commit
+    if ! command -v pip &> /dev/null; then
+        echo "❌ pip is not installed. Please install pip first."
+        exit 1
+    fi
+    pip install --user pre-commit
 else
     echo "✅ pre-commit is already installed"
 fi

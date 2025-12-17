@@ -1,219 +1,134 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC
-    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
-    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-    <property name="charset" value="UTF-8"/>
-    <property name="severity" value="warning"/>
-    <property name="fileExtensions" value="java, properties, xml"/>
+    <property name="charset" value="UTF-8" />
+    <property name="severity" value="warning" />
+    <property name="fileExtensions" value="java, properties, xml" />
 
     <!-- Excludes all 'module-info.java' files -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value="module\-info\.java$"/>
+        <property name="fileNamePattern" value="module\-info\.java$" />
     </module>
 
     <!-- Size Violations -->
     <module name="FileLength">
-        <property name="max" value="2000"/>
+        <property name="max" value="2000" />
     </module>
     <module name="LineLength">
-        <property name="max" value="120"/>
-        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        <property name="max" value="120" />
+        <property name="ignorePattern"
+            value="^package.*|^import.*|a href|href|http://|https://|ftp://" />
     </module>
 
-    <!-- Whitespace -->
-    <module name="EmptyBlock">
-        <property name="option" value="TEXT"/>
-        <property name="tokens"
-                  value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
-    </module>
-    <module name="WhitespaceAfter" />
-    <module name="WhitespaceAround">
-        <property name="allowEmptyConstructors" value="true"/>
-        <property name="allowEmptyLambdas" value="true"/>
-        <property name="allowEmptyMethods" value="true"/>
-        <property name="allowEmptyTypes" value="true"/>
-        <property name="allowEmptyLoops" value="false"/>
-        <property name="ignoreEnhancedForColon" value="false"/>
-        <property name="tokens"
-                  value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN,
-                  BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, DO_WHILE, EQUAL, GE, GT,
-                  LAMBDA, LAND, LCURLY, LE, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE,
-                  LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN,
-                  LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE,
-                  LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS,
-                  PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN,
-                  STAR, STAR_ASSIGN, TYPE_EXTENSION_AND"/>
-    </module>
-
-    <!-- Modifier Checks -->
-    <module name="ModifierOrder">
-        <property name="tokens"
-                  value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, VARIABLE_DEF"/>
-    </module>
-
-    <!-- Checks for blocks. You know, those {}'s -->
-    <module name="AvoidNestedBlocks"/>
-    <module name="EmptyBlock">
-        <property name="option" value="TEXT"/>
-        <property name="tokens"
-                  value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
-    </module>
-    <module name="LeftCurly"/>
-    <module name="NeedBraces"/>
-    <module name="RightCurly"/>
-    <module name="RightCurly">
-        <property name="option" value="alone"/>
-        <property name="tokens"
-                  value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT"/>
-    </module>
-
-    <!-- Checks for common coding problems -->
-    <module name="EmptyStatement"/>
-    <module name="EqualsHashCode"/>
-    <module name="HiddenField">
-        <property name="ignoreConstructorParameter" value="true"/>
-        <property name="ignoreSetter" value="true"/>
-    </module>
-    <module name="IllegalInstantiation"/>
-    <module name="InnerAssignment"/>
-    <module name="MagicNumber">
-        <property name="ignoreNumbers" value="-1, 0, 1, 2"/>
-    </module>
-    <module name="MissingSwitchDefault"/>
-    <module name="SimplifyBooleanExpression"/>
-    <module name="SimplifyBooleanReturn"/>
-
-    <!-- Checks for class design -->
-    <module name="DesignForExtension">
-        <property name="ignoredAnnotations" value="Override, Test"/>
-    </module>
-    <module name="FinalClass"/>
-    <module name="HideUtilityClassConstructor"/>
-    <module name="InterfaceIsType"/>
-    <module name="OneTopLevelClass"/>
-    <module name="VisibilityModifier">
-        <property name="packageAllowed" value="true"/>
-        <property name="protectedAllowed" value="true"/>
-    </module>
-
-    <!-- Miscellaneous other checks -->
-    <module name="ArrayTypeStyle"/>
-    <module name="FinalParameters"/>
-    <module name="TodoComment"/>
-    <module name="UpperEll"/>
-
-    <module name="OneStatementPerLine"/>
-    <module name="MultipleVariableDeclarations"/>
-    <module name="AvoidDoubleBraceInitialization"/>
 
     <!-- Spring Boot specific checks -->
     <module name="RegexpSingleline">
-        <property name="format" value="System\.out\.print"/>
-        <property name="message" value="Use logger instead of System.out"/>
+        <property name="format" value="System\.out\.print" />
+        <property name="message" value="Use logger instead of System.out" />
     </module>
     <module name="RegexpSingleline">
-        <property name="format" value="System\.err\.print"/>
-        <property name="message" value="Use logger instead of System.err"/>
+        <property name="format" value="System\.err\.print" />
+        <property name="message" value="Use logger instead of System.err" />
     </module>
 
     <module name="TreeWalker">
         <!-- Checks for Javadoc comments -->
-        <module name="InvalidJavadocPosition"/>
+        <module name="InvalidJavadocPosition" />
         <module name="JavadocMethod">
-            <property name="scope" value="public"/>
-            <property name="allowMissingParamTags" value="true"/>
-            <property name="allowMissingReturnTag" value="true"/>
+            <property name="scope" value="public" />
+            <property name="allowMissingParamTags" value="true" />
+            <property name="allowMissingReturnTag" value="true" />
         </module>
         <module name="JavadocType">
-            <property name="scope" value="public"/>
-            <property name="allowMissingParamTags" value="true"/>
+            <property name="scope" value="public" />
+            <property name="allowMissingParamTags" value="true" />
         </module>
         <module name="JavadocVariable">
-            <property name="scope" value="public"/>
+            <property name="scope" value="public" />
         </module>
-        <module name="JavadocStyle"/>
+        <module name="JavadocStyle" />
 
         <!-- Checks for Naming Conventions -->
-        <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>
-        <module name="LocalVariableName"/>
-        <module name="MemberName"/>
-        <module name="MethodName"/>
-        <module name="PackageName"/>
-        <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
-        <module name="TypeName"/>
+        <module name="ConstantName" />
+        <module name="LocalFinalVariableName" />
+        <module name="LocalVariableName" />
+        <module name="MemberName" />
+        <module name="MethodName" />
+        <module name="PackageName" />
+        <module name="ParameterName" />
+        <module name="StaticVariableName" />
+        <module name="TypeName" />
 
         <!-- Checks for imports -->
-        <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/>
-        <module name="RedundantImport"/>
+        <module name="AvoidStarImport" />
+        <module name="IllegalImport" />
+        <module name="RedundantImport" />
         <module name="UnusedImports">
-            <property name="processJavadoc" value="true"/>
+            <property name="processJavadoc" value="true" />
         </module>
 
         <!-- Checks for Size Violations -->
         <module name="MethodLength">
-            <property name="max" value="150"/>
+            <property name="max" value="150" />
         </module>
         <module name="ParameterNumber">
-            <property name="max" value="7"/>
+            <property name="max" value="7" />
         </module>
 
         <!-- Checks for whitespace -->
-        <module name="EmptyForIteratorPad"/>
-        <module name="GenericWhitespace"/>
-        <module name="MethodParamPad"/>
-        <module name="NoWhitespaceAfter"/>
-        <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
-        <module name="ParenPad"/>
-        <module name="TypecastParenPad"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
+        <module name="EmptyForIteratorPad" />
+        <module name="GenericWhitespace" />
+        <module name="MethodParamPad" />
+        <module name="NoWhitespaceAfter" />
+        <module name="NoWhitespaceBefore" />
+        <module name="OperatorWrap" />
+        <module name="ParenPad" />
+        <module name="TypecastParenPad" />
+        <module name="WhitespaceAfter" />
+        <module name="WhitespaceAround" />
 
         <!-- Modifier Checks -->
-        <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
+        <module name="ModifierOrder" />
+        <module name="RedundantModifier" />
 
         <!-- Checks for blocks -->
-        <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
-        <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
-        <module name="RightCurly"/>
+        <module name="AvoidNestedBlocks" />
+        <module name="EmptyBlock" />
+        <module name="LeftCurly" />
+        <module name="NeedBraces" />
+        <module name="RightCurly" />
 
         <!-- Checks for common coding problems -->
-        <module name="EmptyStatement"/>
-        <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
-        <module name="IllegalInstantiation"/>
-        <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
-        <module name="MissingSwitchDefault"/>
-        <module name="SimplifyBooleanExpression"/>
-        <module name="SimplifyBooleanReturn"/>
+        <module name="EmptyStatement" />
+        <module name="EqualsHashCode" />
+        <module name="HiddenField" />
+        <module name="IllegalInstantiation" />
+        <module name="InnerAssignment" />
+        <module name="MagicNumber" />
+        <module name="MissingSwitchDefault" />
+        <module name="SimplifyBooleanExpression" />
+        <module name="SimplifyBooleanReturn" />
 
         <!-- Checks for class design -->
-        <module name="DesignForExtension"/>
-        <module name="FinalClass"/>
-        <module name="HideUtilityClassConstructor"/>
-        <module name="InterfaceIsType"/>
-        <module name="OneTopLevelClass"/>
-        <module name="VisibilityModifier"/>
+        <module name="DesignForExtension" />
+        <module name="FinalClass" />
+        <module name="HideUtilityClassConstructor" />
+        <module name="InterfaceIsType" />
+        <module name="OneTopLevelClass" />
+        <module name="VisibilityModifier" />
 
         <!-- Miscellaneous other checks -->
-        <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters"/>
-        <module name="TodoComment"/>
-        <module name="UpperEll"/>
+        <module name="ArrayTypeStyle" />
+        <module name="FinalParameters" />
+        <module name="TodoComment" />
+        <module name="UpperEll" />
 
         <!-- Spring Boot specific -->
         <module name="AnnotationLocation">
-            <property name="tokens" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
-            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+            <property name="tokens"
+                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
+            <property name="allowSamelineSingleParameterlessAnnotation" value="false" />
         </module>
     </module>
 </module>

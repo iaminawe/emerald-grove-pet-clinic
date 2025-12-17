@@ -23,7 +23,7 @@ The Spring PetClinic application manages the core operations of a veterinary cli
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/liatrio-labs/spring-petclinic-enhanced
 cd spring-petclinic
 
 # Run with Maven

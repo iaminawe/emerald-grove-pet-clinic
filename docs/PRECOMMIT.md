@@ -84,7 +84,8 @@ Java code style configuration for Checkstyle integration.
 pre-commit run --all-files
 
 # Run specific hooks
-pre-commit run trailing-whitespace end-of-file-fixer
+pre-commit run trailing-whitespace
+pre-commit run end-of-file-fixer
 
 # Run hooks on specific files
 pre-commit run --files README.md
@@ -202,20 +203,20 @@ The Maven compilation check ensures code quality but can be slow. Consider:
 
 1. Add to `.pre-commit-config.yaml`:
 
-```yaml
-- repo: https://github.com/example/repo
-  rev: v1.0.0
-  hooks:
-    - id: hook-name
-      args: [--option]
-```
+    ```yaml
+    - repo: https://github.com/example/repo
+      rev: v1.0.0
+      hooks:
+        - id: hook-name
+          args: [--option]
+    ```
 
-1. Install updated hooks:
+2. Install updated hooks:
 
-```bash
-pre-commit install
-pre-commit run --all-files
-```
+    ```bash
+    pre-commit install
+    pre-commit run --all-files
+    ```
 
 ### Modifying Hook Behavior
 
@@ -317,7 +318,7 @@ git commit -m "chore: update pre-commit hook versions"
 pre-commit --help
 
 # Specific hook help
-pre-commit run --help <hook-name>
+pre-commit run --help
 
 # Configuration validation
 pre-commit validate-config

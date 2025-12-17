@@ -172,6 +172,8 @@ class ClinicServiceTests {
     @Autowired
     protected VetRepository vets;
 
+    private Pageable pageable = PageRequest.of(0, 10);
+
     @Test
     void shouldFindOwnersByLastName() {
         Page<Owner> owners = this.owners.findByLastNameStartingWith("Davis", pageable);

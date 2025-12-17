@@ -115,7 +115,7 @@ The application uses an in-memory H2 database by default with sample data.
 
 ```bash
 # Start MySQL
-docker run -e MYSQL_USER=petclinic -e MYSQL_PASSWORD=petclinic -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:9.5
+docker run -e MYSQL_USER=petclinic -e MYSQL_PASSWORD=petclinic -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:8.4
 
 # Run with MySQL profile
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql
@@ -125,7 +125,7 @@ docker run -e MYSQL_USER=petclinic -e MYSQL_PASSWORD=petclinic -e MYSQL_ROOT_PAS
 
 ```bash
 # Start PostgreSQL
-docker run -e POSTGRES_USER=petclinic -e POSTGRES_PASSWORD=petclinic -e POSTGRES_DB=petclinic -p 5432:5432 postgres:18.1
+docker run -e POSTGRES_USER=petclinic -e POSTGRES_PASSWORD=petclinic -e POSTGRES_DB=petclinic -p 5432:5432 postgres:17
 
 # Run with PostgreSQL profile
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
@@ -257,7 +257,7 @@ Build a Docker image using Spring Boot build plugin:
 - Write unit tests for business logic
 - Add integration tests for data access
 - Test web controllers with MockMvc
-- Maintain test coverage above 80%
+- Maintain test coverage above 90%
 
 ## Troubleshooting
 

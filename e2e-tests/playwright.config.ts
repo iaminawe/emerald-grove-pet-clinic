@@ -23,14 +23,15 @@ export default defineConfig({
     video: 'retain-on-failure'
   },
   globalSetup: './tests/global-setup.ts',
-  webServer: {
-    command: '../mvnw -f ../pom.xml spring-boot:run',
-    url: process.env.E2E_BASE_URL ?? 'http://localhost:8080',
-    reuseExistingServer: true,
-    timeout: 120_000,
-    stdout: 'pipe',
-    stderr: 'pipe'
-  },
+  // webServer configuration temporarily disabled due to port conflict
+  // webServer: {
+  //   command: '../mvnw -f ../pom.xml spring-boot:run',
+  //   url: process.env.E2E_BASE_URL ?? 'http://localhost:8080',
+  //   reuseExistingServer: true,
+  //   timeout: 120_000,
+  //   stdout: 'pipe',
+  //   stderr: 'pipe'
+  // },
   projects: [
     {
       name: 'chromium',

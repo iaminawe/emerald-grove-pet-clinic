@@ -32,6 +32,12 @@ INSERT INTO owners VALUES (default, 'Jeff', 'Black', '1450 Oak Blvd.', 'Monona',
 INSERT INTO owners VALUES (default, 'Maria', 'Escobito', '345 Maple St.', 'Madison', '6085557683');
 INSERT INTO owners VALUES (default, 'David', 'Schroeder', '2749 Blackhawk Trail', 'Madison', '6085559435');
 INSERT INTO owners VALUES (default, 'Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487');
+INSERT INTO owners VALUES (default, 'Alice', 'Davis', '100 Elm St.', 'Madison', '6085551101');
+INSERT INTO owners VALUES (default, 'Charlie', 'Davis', '101 Elm St.', 'Madison', '6085551102');
+INSERT INTO owners VALUES (default, 'Diana', 'Davis', '102 Elm St.', 'Madison', '6085551103');
+INSERT INTO owners VALUES (default, 'Edward', 'Davis', '103 Elm St.', 'Madison', '6085551104');
+INSERT INTO owners VALUES (default, 'Fiona', 'Davis', '104 Elm St.', 'Madison', '6085551105');
+INSERT INTO owners VALUES (default, 'Gregory', 'Davis', '105 Elm St.', 'Madison', '6085551106');
 
 INSERT INTO pets VALUES (default, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets VALUES (default, 'Basil', '2012-08-06', 6, 2);
@@ -51,3 +57,9 @@ INSERT INTO visits VALUES (default, 7, '2013-01-01', 'rabies shot');
 INSERT INTO visits VALUES (default, 8, '2013-01-02', 'rabies shot');
 INSERT INTO visits VALUES (default, 8, '2013-01-03', 'neutered');
 INSERT INTO visits VALUES (default, 7, '2013-01-04', 'spayed');
+INSERT INTO visits VALUES (default, 1, DATEADD('DAY', 1, CURRENT_DATE), 'annual checkup');
+INSERT INTO visits VALUES (default, 3, DATEADD('DAY', 2, CURRENT_DATE), 'vaccination booster');
+INSERT INTO visits VALUES (default, 5, DATEADD('DAY', 3, CURRENT_DATE), 'dental cleaning');
+INSERT INTO visits VALUES (default, 11, DATEADD('DAY', 5, CURRENT_DATE), 'wing clipping');
+INSERT INTO visits VALUES (default, 7, DATEADD('DAY', 6, CURRENT_DATE), 'routine wellness exam');
+INSERT INTO visits VALUES (default, 12, DATEADD('DAY', 10, CURRENT_DATE), 'skin allergy follow-up');

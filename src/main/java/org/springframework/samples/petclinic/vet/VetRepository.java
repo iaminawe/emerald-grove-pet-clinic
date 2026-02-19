@@ -55,4 +55,14 @@ public interface VetRepository extends Repository<Vet, Integer> {
 	@Cacheable("vets")
 	Page<Vet> findAll(Pageable pageable) throws DataAccessException;
 
+	/**
+	 * Retrieve {@link Vet}s from the data store by last name, returning all vets whose
+	 * last name <i>starts</i> with the given name.
+	 * @param lastName Value to search for
+	 * @param pageable the pagination information
+	 * @return a Page of matching {@link Vet}s (or an empty Page if none found)
+	 */
+	@Transactional(readOnly = true)
+	Page<Vet> findByLastNameStartingWith(String lastName, Pageable pageable);
+
 }

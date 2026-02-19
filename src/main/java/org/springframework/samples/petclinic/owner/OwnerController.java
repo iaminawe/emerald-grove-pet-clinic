@@ -81,6 +81,14 @@ class OwnerController {
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 
+		List<Owner> duplicates = this.owners.findByFirstNameAndLastNameAndTelephone(owner.getFirstName(),
+				owner.getLastName(), owner.getTelephone());
+		if (!duplicates.isEmpty()) {
+			result.reject("duplicate",
+					"An owner with the same first name, last name, and telephone already exists.");
+			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+		}
+
 		this.owners.save(owner);
 		redirectAttributes.addFlashAttribute("message", "New Owner Created");
 		return "redirect:/owners/" + owner.getId();
@@ -125,15 +133,16 @@ class OwnerController {
 		}
 
 		// multiple owners found
-		return addPaginationModel(page, model, ownersResults);
+		return addPaginationModel(page, model, ownersResults, lastName);
 	}
 
-	private String addPaginationModel(int page, Model model, Page<Owner> paginated) {
+	private String addPaginationModel(int page, Model model, Page<Owner> paginated, String lastName) {
 		List<Owner> listOwners = paginated.getContent();
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", paginated.getTotalPages());
 		model.addAttribute("totalItems", paginated.getTotalElements());
 		model.addAttribute("listOwners", listOwners);
+		model.addAttribute("lastName", lastName);
 		return "owners/ownersList";
 	}
 

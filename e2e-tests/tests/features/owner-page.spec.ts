@@ -10,7 +10,7 @@ test('OwnerPage can search owners by last name and open owner details', async ({
 
   const ownersTable = ownerPage.ownersTable();
   await expect(ownersTable).toBeVisible();
-  await expect(ownersTable.locator('tbody tr')).toHaveCount(2);
+  await expect(ownersTable.locator('tbody tr')).toHaveCount(5);
 
   await ownerPage.openOwnerDetailsByName('Betty Davis');
   await expect(ownerPage.heading().filter({ hasText: /Owner Information/i })).toBeVisible();

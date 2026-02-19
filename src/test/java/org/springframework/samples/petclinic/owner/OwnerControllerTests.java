@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -116,6 +118,8 @@ class OwnerControllerTests {
 
 	@Test
 	void testProcessCreationFormSuccess() throws Exception {
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("Joe", "Bloggs", "1316761638"))
+			.thenReturn(Collections.emptyList());
 		mockMvc
 			.perform(post("/owners/new").param("firstName", "Joe")
 				.param("lastName", "Bloggs")
@@ -184,8 +188,7 @@ class OwnerControllerTests {
 			.andExpect(view().name("owners/ownersList"))
 			.andExpect(model().attribute("lastName", "Franklin"))
 			.andExpect(model().attribute("listOwners", hasSize(2)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", startsWith("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", startsWith("Franklin")))));
 
 		// Verify the repository was called with the correct filter
 		verify(this.owners).findByLastNameStartingWith(eq("Franklin"), any(Pageable.class));
@@ -201,11 +204,10 @@ class OwnerControllerTests {
 		franklin3.setCity("Madison");
 		franklin3.setTelephone("6085551025");
 
-		// Simulate page 2 of filtered results (total 7 items across pages, page size 5, showing page 2 with 2 items)
-		Page<Owner> page2Results = new PageImpl<>(List.of(franklin3),
-				PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 1)))
+		// Simulate page 2 of filtered results (total 7 items across pages, page size 5,
+		// showing page 2 with 2 items)
+		Page<Owner> page2Results = new PageImpl<>(List.of(franklin3), PageRequest.of(1, 5), 7);
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2Results);
 
 		mockMvc.perform(get("/owners?page=2").param("lastName", "Franklin"))
@@ -216,8 +218,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(1)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 
 		// Verify the repository was called with "Franklin" filter even on page 2
 		verify(this.owners).findByLastNameStartingWith(eq("Franklin"),
@@ -259,8 +260,7 @@ class OwnerControllerTests {
 
 		List<Owner> page1Content = List.of(george, f2, f3, f4, f5);
 		Page<Owner> page1 = new PageImpl<>(page1Content, PageRequest.of(0, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 0)))
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 0)))
 			.thenReturn(page1);
 
 		// Assert page 1 returns filtered results with correct pagination metadata
@@ -272,8 +272,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(5)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 
 		// Page 2: remaining 2 Franklins
 		Owner f6 = new Owner();
@@ -293,8 +292,7 @@ class OwnerControllerTests {
 
 		List<Owner> page2Content = List.of(f6, f7);
 		Page<Owner> page2 = new PageImpl<>(page2Content, PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 1)))
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2);
 
 		// Assert page 2 still uses the same filter and returns correct results
@@ -306,8 +304,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(2)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 	}
 
 	@Test
@@ -356,7 +353,8 @@ class OwnerControllerTests {
 			.andExpect(view().name("owners/ownersList"))
 			// Verify all expected model attributes are present
 			.andExpect(model().attributeExists("lastName", "currentPage", "totalPages", "totalItems", "listOwners"))
-			// Verify filter value is the search term, available for template pagination links
+			// Verify filter value is the search term, available for template pagination
+			// links
 			.andExpect(model().attribute("lastName", "Fr"))
 			.andExpect(model().attribute("currentPage", 1))
 			.andExpect(model().attribute("totalPages", 1))
@@ -464,6 +462,55 @@ class OwnerControllerTests {
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/owners/" + pathOwnerId + "/edit"))
 			.andExpect(flash().attributeExists("error"));
+	}
+
+	@Test
+	void testProcessCreationFormDuplicateOwnerReturnsFormWithError() throws Exception {
+		Owner existing = george();
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("George", "Franklin", "6085551023"))
+			.thenReturn(List.of(existing));
+
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"))
+			.andExpect(model().errorCount(1))
+			.andExpect(view().name("owners/createOrUpdateOwnerForm"));
+	}
+
+	@Test
+	void testProcessCreationFormDuplicateOwnerDoesNotSave() throws Exception {
+		Owner existing = george();
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("George", "Franklin", "6085551023"))
+			.thenReturn(List.of(existing));
+
+		mockMvc.perform(post("/owners/new").param("firstName", "George")
+			.param("lastName", "Franklin")
+			.param("address", "110 W. Liberty St.")
+			.param("city", "Madison")
+			.param("telephone", "6085551023"));
+
+		verify(this.owners, never()).save(any(Owner.class));
+	}
+
+	@Test
+	void testProcessCreationFormNonDuplicateSucceeds() throws Exception {
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("Unique", "Person", "5551234567"))
+			.thenReturn(Collections.emptyList());
+
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "Unique")
+				.param("lastName", "Person")
+				.param("address", "456 New Street")
+				.param("city", "Springfield")
+				.param("telephone", "5551234567"))
+			.andExpect(status().is3xxRedirection());
+
+		verify(this.owners).save(any(Owner.class));
 	}
 
 }

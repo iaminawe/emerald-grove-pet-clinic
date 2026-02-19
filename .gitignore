@@ -50,3 +50,8 @@ temp
 
 ### Local Dev ###
 .local/
+
+# Auto-added by agent
+node_modules/
+.env
+.env.local

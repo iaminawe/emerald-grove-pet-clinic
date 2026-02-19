@@ -33,8 +33,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -177,6 +179,24 @@ class PetControllerTests {
 				.param("birthDate", "2015-02-12"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/owners/{ownerId}"));
+	}
+
+	@Test
+	void testProcessDeletePetSuccess() throws Exception {
+		mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/{ownerId}"))
+			.andExpect(flash().attributeExists("message"));
+
+		verify(this.owners).save(org.mockito.ArgumentMatchers.any(Owner.class));
+	}
+
+	@Test
+	void testProcessDeletePetWithInvalidPetId() throws Exception {
+		mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, 999))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/{ownerId}"))
+			.andExpect(flash().attributeExists("error"));
 	}
 
 	@Nested

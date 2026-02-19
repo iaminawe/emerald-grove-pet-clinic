@@ -84,8 +84,7 @@ class OwnerController {
 		List<Owner> duplicates = this.owners.findByFirstNameAndLastNameAndTelephone(owner.getFirstName(),
 				owner.getLastName(), owner.getTelephone());
 		if (!duplicates.isEmpty()) {
-			result.reject("duplicate",
-					"An owner with the same first name, last name, and telephone already exists.");
+			result.reject("duplicate", "An owner with the same first name, last name, and telephone already exists.");
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 

@@ -71,6 +71,12 @@
           <tr>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/edit}" th:text="#{editPet}">Edit Pet</a></td>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/visits/new}" th:text="#{addVisit}">Add Visit</a></td>
+            <td>
+              <form th:action="@{__${owner.id}__/pets/__${pet.id}__/delete}" method="post" style="display:inline"
+                    onsubmit="return confirm('Are you sure you want to delete this pet? All associated visits will also be deleted.');">
+                <button type="submit" class="btn btn-danger btn-sm" th:text="#{deletePet}">Delete Pet</button>
+              </form>
+            </td>
           </tr>
         </table>
       </td>

@@ -53,6 +53,10 @@ public class Pet extends NamedEntity {
 	@JoinColumn(name = "type_id")
 	private PetType type;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "owner_id", insertable = false, updatable = false)
+	private Owner owner;
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "pet_id")
 	@OrderBy("date ASC")
@@ -72,6 +76,10 @@ public class Pet extends NamedEntity {
 
 	public void setType(PetType type) {
 		this.type = type;
+	}
+
+	public Owner getOwner() {
+		return this.owner;
 	}
 
 	public Collection<Visit> getVisits() {

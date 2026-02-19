@@ -51,6 +51,12 @@ INSERT INTO visits (pet_id, visit_date, description) SELECT 7, '2010-03-04', 'ra
 INSERT INTO visits (pet_id, visit_date, description) SELECT 8, '2011-03-04', 'rabies shot' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=2);
 INSERT INTO visits (pet_id, visit_date, description) SELECT 8, '2009-06-04', 'neutered' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=3);
 INSERT INTO visits (pet_id, visit_date, description) SELECT 7, '2008-09-04', 'spayed' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=4);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 1, CURRENT_DATE + INTERVAL '1 day', 'annual checkup' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=5);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 3, CURRENT_DATE + INTERVAL '2 days', 'vaccination booster' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=6);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 5, CURRENT_DATE + INTERVAL '3 days', 'dental cleaning' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=7);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 11, CURRENT_DATE + INTERVAL '5 days', 'wing clipping' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=8);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 7, CURRENT_DATE + INTERVAL '6 days', 'routine wellness exam' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=9);
+INSERT INTO visits (pet_id, visit_date, description) SELECT 12, CURRENT_DATE + INTERVAL '10 days', 'skin allergy follow-up' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=10);
 
 SELECT setval(pg_get_serial_sequence('vets', 'id'), COALESCE((SELECT MAX(id) FROM vets), 0));
 SELECT setval(pg_get_serial_sequence('specialties', 'id'), COALESCE((SELECT MAX(id) FROM specialties), 0));

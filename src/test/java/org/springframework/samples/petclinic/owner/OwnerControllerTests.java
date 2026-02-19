@@ -101,6 +101,9 @@ class OwnerControllerTests {
 		given(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class)))
 			.willReturn(new PageImpl<>(List.of(george)));
 
+		given(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""), any(Pageable.class)))
+			.willReturn(new PageImpl<>(List.of(george)));
+
 		given(this.owners.findById(TEST_OWNER_ID)).willReturn(Optional.of(george));
 		Visit visit = new Visit();
 		visit.setDate(LocalDate.now());
@@ -160,7 +163,8 @@ class OwnerControllerTests {
 		other.setTelephone("6085551749");
 
 		Page<Owner> tasks = new PageImpl<>(List.of(george, other));
-		when(this.owners.findByLastNameStartingWith(anyString(), any(Pageable.class))).thenReturn(tasks);
+		when(this.owners.findByLastNameAndTelephoneAndCity(anyString(), anyString(), anyString(), any(Pageable.class)))
+			.thenReturn(tasks);
 		mockMvc.perform(get("/owners?page=1"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("owners/ownersList"))
@@ -182,7 +186,8 @@ class OwnerControllerTests {
 		george2.setTelephone("6085551024");
 
 		Page<Owner> tasks = new PageImpl<>(List.of(george, george2));
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class))).thenReturn(tasks);
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(tasks);
 		mockMvc.perform(get("/owners?page=1").param("lastName", "Franklin"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("owners/ownersList"))
@@ -191,7 +196,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", startsWith("Franklin")))));
 
 		// Verify the repository was called with the correct filter
-		verify(this.owners).findByLastNameStartingWith(eq("Franklin"), any(Pageable.class));
+		verify(this.owners).findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""), any(Pageable.class));
 	}
 
 	@Test
@@ -207,7 +212,8 @@ class OwnerControllerTests {
 		// Simulate page 2 of filtered results (total 7 items across pages, page size 5,
 		// showing page 2 with 2 items)
 		Page<Owner> page2Results = new PageImpl<>(List.of(franklin3), PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""),
+				argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2Results);
 
 		mockMvc.perform(get("/owners?page=2").param("lastName", "Franklin"))
@@ -221,7 +227,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 
 		// Verify the repository was called with "Franklin" filter even on page 2
-		verify(this.owners).findByLastNameStartingWith(eq("Franklin"),
+		verify(this.owners).findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""),
 				argThat(pageable -> pageable.getPageNumber() == 1));
 	}
 
@@ -260,7 +266,8 @@ class OwnerControllerTests {
 
 		List<Owner> page1Content = List.of(george, f2, f3, f4, f5);
 		Page<Owner> page1 = new PageImpl<>(page1Content, PageRequest.of(0, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 0)))
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""),
+				argThat(pageable -> pageable.getPageNumber() == 0)))
 			.thenReturn(page1);
 
 		// Assert page 1 returns filtered results with correct pagination metadata
@@ -292,7 +299,8 @@ class OwnerControllerTests {
 
 		List<Owner> page2Content = List.of(f6, f7);
 		Page<Owner> page2 = new PageImpl<>(page2Content, PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""),
+				argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2);
 
 		// Assert page 2 still uses the same filter and returns correct results
@@ -320,7 +328,8 @@ class OwnerControllerTests {
 		betty.setTelephone("6085551749");
 
 		Page<Owner> allOwners = new PageImpl<>(List.of(george, betty), PageRequest.of(0, 5), 2);
-		when(this.owners.findByLastNameStartingWith(eq(""), any(Pageable.class))).thenReturn(allOwners);
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq(""), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(allOwners);
 
 		// With explicitly empty lastName param
 		mockMvc.perform(get("/owners?page=1").param("lastName", ""))
@@ -330,8 +339,8 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("currentPage", 1))
 			.andExpect(model().attribute("listOwners", hasSize(2)));
 
-		// Verify repository was called with empty string (not null)
-		verify(this.owners).findByLastNameStartingWith(eq(""), any(Pageable.class));
+		// Verify repository was called with empty strings
+		verify(this.owners).findByLastNameAndTelephoneAndCity(eq(""), eq(""), eq(""), any(Pageable.class));
 	}
 
 	@Test
@@ -346,7 +355,8 @@ class OwnerControllerTests {
 		george2.setTelephone("6085551024");
 
 		Page<Owner> filteredPage = new PageImpl<>(List.of(george, george2), PageRequest.of(0, 5), 2);
-		when(this.owners.findByLastNameStartingWith(eq("Fr"), any(Pageable.class))).thenReturn(filteredPage);
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Fr"), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(filteredPage);
 
 		mockMvc.perform(get("/owners?page=1").param("lastName", "Fr"))
 			.andExpect(status().isOk())
@@ -365,7 +375,8 @@ class OwnerControllerTests {
 	@Test
 	void testProcessFindFormByLastName() throws Exception {
 		Page<Owner> tasks = new PageImpl<>(List.of(george()));
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class))).thenReturn(tasks);
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(tasks);
 		mockMvc.perform(get("/owners?page=1").param("lastName", "Franklin"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
@@ -374,13 +385,74 @@ class OwnerControllerTests {
 	@Test
 	void testProcessFindFormNoOwnersFound() throws Exception {
 		Page<Owner> tasks = new PageImpl<>(List.of());
-		when(this.owners.findByLastNameStartingWith(eq("Unknown Surname"), any(Pageable.class))).thenReturn(tasks);
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Unknown Surname"), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(tasks);
 		mockMvc.perform(get("/owners?page=1").param("lastName", "Unknown Surname"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeHasFieldErrors("owner", "lastName"))
 			.andExpect(model().attributeHasFieldErrorCode("owner", "lastName", "notFound"))
 			.andExpect(view().name("owners/findOwners"));
 
+	}
+
+	@Test
+	void testProcessFindFormByTelephone() throws Exception {
+		Page<Owner> tasks = new PageImpl<>(List.of(george()));
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq(""), eq("6085551023"), eq(""), any(Pageable.class)))
+			.thenReturn(tasks);
+		mockMvc.perform(get("/owners?page=1").param("telephone", "6085551023"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
+	}
+
+	@Test
+	void testProcessFindFormByCity() throws Exception {
+		Page<Owner> tasks = new PageImpl<>(List.of(george(), new Owner()));
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq(""), eq(""), eq("Madison"), any(Pageable.class)))
+			.thenReturn(tasks);
+		mockMvc.perform(get("/owners?page=1").param("city", "Madison"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("owners/ownersList"));
+	}
+
+	@Test
+	void testProcessFindFormByMultipleCriteria() throws Exception {
+		Page<Owner> tasks = new PageImpl<>(List.of(george()));
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Franklin"), eq("6085551023"), eq("Madison"),
+				any(Pageable.class)))
+			.thenReturn(tasks);
+		mockMvc
+			.perform(get("/owners?page=1").param("lastName", "Franklin")
+				.param("telephone", "6085551023")
+				.param("city", "Madison"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
+	}
+
+	@Test
+	void testProcessFindFormInvalidTelephone() throws Exception {
+		mockMvc.perform(get("/owners?page=1").param("telephone", "abc123"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+			.andExpect(model().attributeHasFieldErrorCode("owner", "telephone", "invalid"))
+			.andExpect(view().name("owners/findOwners"));
+	}
+
+	@Test
+	void testProcessFindFormInvalidTelephoneWithSpecialChars() throws Exception {
+		mockMvc.perform(get("/owners?page=1").param("telephone", "608-555-1023"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+			.andExpect(model().attributeHasFieldErrorCode("owner", "telephone", "invalid"))
+			.andExpect(view().name("owners/findOwners"));
+	}
+
+	@Test
+	void testProcessFindFormDefaultBehaviorBlankFields() throws Exception {
+		Page<Owner> tasks = new PageImpl<>(List.of(george(), new Owner()));
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq(""), eq(""), eq(""), any(Pageable.class)))
+			.thenReturn(tasks);
+		mockMvc.perform(get("/owners?page=1")).andExpect(status().isOk()).andExpect(view().name("owners/ownersList"));
 	}
 
 	@Test

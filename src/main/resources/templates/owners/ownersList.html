@@ -6,6 +6,17 @@
 
   <h2 th:text="#{owners}">Owners</h2>
 
+  <form th:action="@{/owners}" method="get" class="form-inline" id="filter-owner-form"
+    style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+    <label for="lastName" class="control-label" th:text="#{lastName}">Last name</label>
+    <input type="text" class="form-control" id="lastName" name="lastName"
+      th:value="${lastName}" size="20" maxlength="80" placeholder="Filter by last name..." />
+    <input type="hidden" name="page" value="1" />
+    <button type="submit" class="btn btn-primary btn-sm" th:text="#{findOwner}">Find Owner</button>
+    <a th:if="${#strings.length(lastName) > 0}" th:href="@{/owners}" class="btn btn-sm"
+      style="margin-left: 0.25rem;">Clear</a>
+  </form>
+
   <table id="owners" class="table table-striped liatrio-table">
     <thead>
       <tr>

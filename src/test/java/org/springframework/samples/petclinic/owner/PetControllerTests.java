@@ -32,12 +32,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -181,22 +184,67 @@ class PetControllerTests {
 			.andExpect(view().name("redirect:/owners/{ownerId}"));
 	}
 
-	@Test
-	void testProcessDeletePetSuccess() throws Exception {
-		mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(view().name("redirect:/owners/{ownerId}"))
-			.andExpect(flash().attributeExists("message"));
+	@Nested
+	class ProcessDeletePet {
 
-		verify(this.owners).save(org.mockito.ArgumentMatchers.any(Owner.class));
-	}
+		@Test
+		void testProcessDeletePetSuccess() throws Exception {
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"))
+				.andExpect(flash().attribute("message", is("Pet has been deleted")));
 
-	@Test
-	void testProcessDeletePetWithInvalidPetId() throws Exception {
-		mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, 999))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(view().name("redirect:/owners/{ownerId}"))
-			.andExpect(flash().attributeExists("error"));
+			verify(owners).save(org.mockito.ArgumentMatchers.any(Owner.class));
+		}
+
+		@Test
+		void testProcessDeletePetRedirectsToOwnerDetailsPage() throws Exception {
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/owners/" + TEST_OWNER_ID));
+		}
+
+		@Test
+		void testProcessDeletePetWithInvalidPetId() throws Exception {
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, 999))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"))
+				.andExpect(flash().attribute("error", is("Pet not found with id: 999")));
+
+			verify(owners, never()).save(org.mockito.ArgumentMatchers.any(Owner.class));
+		}
+
+		@Test
+		void testProcessDeletePetWithVisits() throws Exception {
+			// The pet in setUp already exists; add visits to it to confirm cascade
+			Owner owner = owners.findById(TEST_OWNER_ID).get();
+			Pet pet = owner.getPet(TEST_PET_ID);
+			Visit visit = new Visit();
+			visit.setDate(LocalDate.now());
+			visit.setDescription("checkup");
+			pet.addVisit(visit);
+
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"))
+				.andExpect(flash().attribute("message", is("Pet has been deleted")));
+
+			verify(owners).save(org.mockito.ArgumentMatchers.any(Owner.class));
+		}
+
+		@Test
+		void testProcessDeleteSecondPet() throws Exception {
+			// Delete the second pet (doggy, id = TEST_PET_ID + 1) to verify correct pet ID is used
+			mockMvc
+				.perform(
+						post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID + 1))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"))
+				.andExpect(flash().attribute("message", is("Pet has been deleted")));
+
+			verify(owners).save(org.mockito.ArgumentMatchers.any(Owner.class));
+		}
+
 	}
 
 	@Nested

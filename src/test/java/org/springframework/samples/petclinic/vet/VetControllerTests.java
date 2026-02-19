@@ -85,6 +85,40 @@ class VetControllerTests {
 		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html?page=1"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attributeExists("specialties"))
+			.andExpect(view().name("vets/vetList"));
+
+	}
+
+	@Test
+	void testShowVetListFilteredBySpecialty() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html").param("page", "1").param("specialty", "radiology"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("selectedSpecialty", "radiology"))
+			.andExpect(view().name("vets/vetList"));
+
+	}
+
+	@Test
+	void testShowVetListFilteredByNone() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html").param("page", "1").param("specialty", "none"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("selectedSpecialty", "none"))
+			.andExpect(view().name("vets/vetList"));
+
+	}
+
+	@Test
+	void testShowVetListNoSpecialtyParam() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html").param("page", "1"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("selectedSpecialty", (Object) null))
 			.andExpect(view().name("vets/vetList"));
 
 	}

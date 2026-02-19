@@ -11,6 +11,19 @@
         <p class="liatrio-muted" th:text="#{vets.subtitle}">A snapshot of the care team and specialties.</p>
       </div>
 
+      <form id="specialty-filter" th:action="@{/vets.html}" method="get" class="liatrio-filter-bar">
+        <label for="specialty" th:text="#{filter.specialty}">Filter by specialty:</label>
+        <select id="specialty" name="specialty" class="form-select liatrio-filter-select"
+          onchange="this.form.submit()">
+          <option value="" th:text="#{filter.all}"
+            th:selected="${selectedSpecialty == null}">All</option>
+          <option value="none" th:text="#{filter.none}"
+            th:selected="${selectedSpecialty == 'none'}">None</option>
+          <option th:each="spec : ${specialties}" th:value="${spec}" th:text="${spec}"
+            th:selected="${spec == selectedSpecialty}">specialty</option>
+        </select>
+      </form>
+
       <table id="vets" class="table table-striped liatrio-table">
         <thead>
           <tr>
@@ -35,27 +48,27 @@
     <span th:text="#{pages}">Pages:</span>
     <span>[</span>
     <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-      <a th:if="${currentPage != i}" th:href="@{'/vets.html?page=__${i}__'}">[[${i}]]</a>
+      <a th:if="${currentPage != i}" th:href="@{/vets.html(page=${i}, specialty=${selectedSpecialty})}">[[${i}]]</a>
       <span th:unless="${currentPage != i}">[[${i}]]</span>
     </span>
     <span>]&nbsp;</span>
     <span>
-      <a th:if="${currentPage > 1}" th:href="@{'/vets.html?page=1'}" th:title="#{first}"
+      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=1, specialty=${selectedSpecialty})}" th:title="#{first}"
         class="fa fa-fast-backward"></a>
       <span th:unless="${currentPage > 1}" th:title="#{first}" class="fa fa-fast-backward"></span>
     </span>
     <span>
-      <a th:if="${currentPage > 1}" th:href="@{'/vets.html?page=__${currentPage - 1}__'}" th:title="#{previous}"
+      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=${currentPage - 1}, specialty=${selectedSpecialty})}" th:title="#{previous}"
         class="fa fa-step-backward"></a>
       <span th:unless="${currentPage > 1}" th:title="#{previous}" class="fa fa-step-backward"></span>
     </span>
     <span>
-      <a th:if="${currentPage < totalPages}" th:href="@{'/vets.html?page=__${currentPage + 1}__'}" th:title="#{next}"
+      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${currentPage + 1}, specialty=${selectedSpecialty})}" th:title="#{next}"
         class="fa fa-step-forward"></a>
       <span th:unless="${currentPage < totalPages}" th:title="#{next}" class="fa fa-step-forward"></span>
     </span>
     <span>
-      <a th:if="${currentPage < totalPages}" th:href="@{'/vets.html?page=__${totalPages}__'}" th:title="#{last}"
+      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${totalPages}, specialty=${selectedSpecialty})}" th:title="#{last}"
         class="fa fa-fast-forward"></a>
       <span th:unless="${currentPage < totalPages}" th:title="#{last}" class="fa fa-fast-forward"></span>
     </span>

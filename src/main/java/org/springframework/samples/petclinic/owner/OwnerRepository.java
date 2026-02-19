@@ -80,8 +80,8 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	Optional<Owner> findById(Integer id);
 
 	/**
-	 * Retrieve {@link Owner}s from the data store that match the given first name,
-	 * last name, and telephone number. Used to detect duplicate owners before creation.
+	 * Retrieve {@link Owner}s from the data store that match the given first name, last
+	 * name, and telephone number. Used to detect duplicate owners before creation.
 	 * @param firstName the owner's first name
 	 * @param lastName the owner's last name
 	 * @param telephone the owner's telephone number

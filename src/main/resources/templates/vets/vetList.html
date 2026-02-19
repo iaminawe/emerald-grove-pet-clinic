@@ -15,12 +15,9 @@
         <label for="specialty" th:text="#{filter.specialty}">Filter by specialty:</label>
         <select id="specialty" name="specialty" class="form-select liatrio-filter-select"
           onchange="this.form.submit()">
-          <option value="" th:text="#{filter.all}"
-            th:selected="${selectedSpecialty == null}">All</option>
-          <option value="none" th:text="#{filter.none}"
-            th:selected="${selectedSpecialty == 'none'}">None</option>
-          <option th:each="spec : ${specialties}" th:value="${spec}" th:text="${spec}"
-            th:selected="${spec == selectedSpecialty}">specialty</option>
+          <option value="" th:selected="${selectedSpecialty == null}" th:text="#{filter.all}"></option>
+          <option value="none" th:selected="${selectedSpecialty == 'none'}" th:text="#{filter.none}"></option>
+          <option th:each="spec : ${specialties}" th:value="${spec}" th:selected="${spec == selectedSpecialty}" th:text="${spec}"></option>
         </select>
       </form>
 

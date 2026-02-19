@@ -75,13 +75,10 @@ class VetController {
 			return new ArrayList<>(vets);
 		}
 		if ("none".equalsIgnoreCase(specialty)) {
-			return vets.stream()
-				.filter(vet -> vet.getNrOfSpecialties() == 0)
-				.collect(Collectors.toList());
+			return vets.stream().filter(vet -> vet.getNrOfSpecialties() == 0).collect(Collectors.toList());
 		}
 		return vets.stream()
-			.filter(vet -> vet.getSpecialties().stream()
-				.anyMatch(s -> s.getName().equalsIgnoreCase(specialty)))
+			.filter(vet -> vet.getSpecialties().stream().anyMatch(s -> s.getName().equalsIgnoreCase(specialty)))
 			.collect(Collectors.toList());
 	}
 

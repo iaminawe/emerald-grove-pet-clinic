@@ -163,8 +163,7 @@ class OwnerControllerTests {
 	@Test
 	void testProcessFindFormNoOwnersFound() throws Exception {
 		Page<Owner> tasks = new PageImpl<>(List.of());
-		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Unknown Surname"), eq(""), eq(""),
-				any(Pageable.class)))
+		when(this.owners.findByLastNameAndTelephoneAndCity(eq("Unknown Surname"), eq(""), eq(""), any(Pageable.class)))
 			.thenReturn(tasks);
 		mockMvc.perform(get("/owners?page=1").param("lastName", "Unknown Surname"))
 			.andExpect(status().isOk())
@@ -231,9 +230,7 @@ class OwnerControllerTests {
 		Page<Owner> tasks = new PageImpl<>(List.of(george(), new Owner()));
 		when(this.owners.findByLastNameAndTelephoneAndCity(eq(""), eq(""), eq(""), any(Pageable.class)))
 			.thenReturn(tasks);
-		mockMvc.perform(get("/owners?page=1"))
-			.andExpect(status().isOk())
-			.andExpect(view().name("owners/ownersList"));
+		mockMvc.perform(get("/owners?page=1")).andExpect(status().isOk()).andExpect(view().name("owners/ownersList"));
 	}
 
 	@Test

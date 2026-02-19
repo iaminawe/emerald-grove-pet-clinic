@@ -31,7 +31,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,7 +79,12 @@ class VetControllerTests {
 		given(this.vets.findAll()).willReturn(Lists.newArrayList(james(), helen()));
 		given(this.vets.findAll(any(Pageable.class)))
 			.willReturn(new PageImpl<Vet>(Lists.newArrayList(james(), helen())));
-
+		given(this.vets.findByLastNameStartingWith(eq(""), any(Pageable.class)))
+			.willReturn(new PageImpl<Vet>(Lists.newArrayList(james(), helen())));
+		given(this.vets.findByLastNameStartingWith(eq("Carter"), any(Pageable.class)))
+			.willReturn(new PageImpl<Vet>(Lists.newArrayList(james())));
+		given(this.vets.findByLastNameStartingWith(eq("Unknown"), any(Pageable.class)))
+			.willReturn(new PageImpl<Vet>(Collections.emptyList()));
 	}
 
 	@Test
@@ -121,6 +129,24 @@ class VetControllerTests {
 			.andExpect(model().attribute("selectedSpecialty", (Object) null))
 			.andExpect(view().name("vets/vetList"));
 
+	}
+
+	@Test
+	void testShowVetListFilteredByLastName() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html").param("page", "1").param("lastName", "Carter"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("lastName", "Carter"))
+			.andExpect(view().name("vets/vetList"));
+	}
+
+	@Test
+	void testShowVetListNoResults() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html").param("page", "1").param("lastName", "Unknown"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("totalItems", 0L))
+			.andExpect(view().name("vets/vetList"));
 	}
 
 	@Test

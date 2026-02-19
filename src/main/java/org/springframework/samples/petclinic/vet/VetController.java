@@ -48,11 +48,15 @@ class VetController {
 
 	@GetMapping("/vets.html")
 	public String showVetList(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "") String lastName,
 			@RequestParam(required = false) String specialty, Model model) {
-		Collection<Vet> allVets = this.vetRepository.findAll();
+
+		// Fetch vets filtered by last name (empty string matches all)
+		Page<Vet> lastNamePage = findPaginatedForVetsLastName(1, lastName, Integer.MAX_VALUE);
+		Collection<Vet> lastNameVets = lastNamePage.getContent();
 
 		// Extract unique specialty names for the filter dropdown
-		List<String> specialtyNames = allVets.stream()
+		List<String> specialtyNames = lastNameVets.stream()
 			.flatMap(vet -> vet.getSpecialties().stream())
 			.map(Specialty::getName)
 			.distinct()
@@ -63,8 +67,10 @@ class VetController {
 		// Normalize selected specialty (null means "all")
 		String selected = (specialty != null && !specialty.isEmpty()) ? specialty : null;
 		model.addAttribute("selectedSpecialty", selected);
+		model.addAttribute("lastName", lastName);
 
-		List<Vet> filteredVets = filterVetsBySpecialty(allVets, selected);
+		// Apply specialty filter on top of last-name results
+		List<Vet> filteredVets = filterVetsBySpecialty(lastNameVets, selected);
 		Page<Vet> paginated = paginateResults(filteredVets, page);
 
 		return addPaginationModel(page, paginated, model);
@@ -98,6 +104,11 @@ class VetController {
 		model.addAttribute("totalItems", paginated.getTotalElements());
 		model.addAttribute("listVets", listVets);
 		return "vets/vetList";
+	}
+
+	private Page<Vet> findPaginatedForVetsLastName(int page, String lastName, int pageSize) {
+		Pageable pageable = PageRequest.of(page - 1, pageSize);
+		return vetRepository.findByLastNameStartingWith(lastName, pageable);
 	}
 
 	@GetMapping({ "/vets" })

@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -58,5 +59,15 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 * input for id)
 	 */
 	Optional<Owner> findById(Integer id);
+
+	/**
+	 * Retrieve {@link Owner}s from the data store that match the given first name,
+	 * last name, and telephone number. Used to detect duplicate owners before creation.
+	 * @param firstName the owner's first name
+	 * @param lastName the owner's last name
+	 * @param telephone the owner's telephone number
+	 * @return a list of matching {@link Owner}s (or an empty list if none found)
+	 */
+	List<Owner> findByFirstNameAndLastNameAndTelephone(String firstName, String lastName, String telephone);
 
 }

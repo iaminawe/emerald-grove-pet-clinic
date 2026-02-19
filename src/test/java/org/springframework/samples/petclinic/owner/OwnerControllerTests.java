@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -116,6 +118,8 @@ class OwnerControllerTests {
 
 	@Test
 	void testProcessCreationFormSuccess() throws Exception {
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("Joe", "Bloggs", "1316761638"))
+			.thenReturn(Collections.emptyList());
 		mockMvc
 			.perform(post("/owners/new").param("firstName", "Joe")
 				.param("lastName", "Bloggs")
@@ -464,6 +468,55 @@ class OwnerControllerTests {
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/owners/" + pathOwnerId + "/edit"))
 			.andExpect(flash().attributeExists("error"));
+	}
+
+	@Test
+	void testProcessCreationFormDuplicateOwnerReturnsFormWithError() throws Exception {
+		Owner existing = george();
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("George", "Franklin", "6085551023"))
+			.thenReturn(List.of(existing));
+
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"))
+			.andExpect(model().errorCount(1))
+			.andExpect(view().name("owners/createOrUpdateOwnerForm"));
+	}
+
+	@Test
+	void testProcessCreationFormDuplicateOwnerDoesNotSave() throws Exception {
+		Owner existing = george();
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("George", "Franklin", "6085551023"))
+			.thenReturn(List.of(existing));
+
+		mockMvc.perform(post("/owners/new").param("firstName", "George")
+			.param("lastName", "Franklin")
+			.param("address", "110 W. Liberty St.")
+			.param("city", "Madison")
+			.param("telephone", "6085551023"));
+
+		verify(this.owners, never()).save(any(Owner.class));
+	}
+
+	@Test
+	void testProcessCreationFormNonDuplicateSucceeds() throws Exception {
+		when(this.owners.findByFirstNameAndLastNameAndTelephone("Unique", "Person", "5551234567"))
+			.thenReturn(Collections.emptyList());
+
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "Unique")
+				.param("lastName", "Person")
+				.param("address", "456 New Street")
+				.param("city", "Springfield")
+				.param("telephone", "5551234567"))
+			.andExpect(status().is3xxRedirection());
+
+		verify(this.owners).save(any(Owner.class));
 	}
 
 }

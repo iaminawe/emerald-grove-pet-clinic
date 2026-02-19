@@ -184,8 +184,7 @@ class OwnerControllerTests {
 			.andExpect(view().name("owners/ownersList"))
 			.andExpect(model().attribute("lastName", "Franklin"))
 			.andExpect(model().attribute("listOwners", hasSize(2)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", startsWith("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", startsWith("Franklin")))));
 
 		// Verify the repository was called with the correct filter
 		verify(this.owners).findByLastNameStartingWith(eq("Franklin"), any(Pageable.class));
@@ -201,11 +200,10 @@ class OwnerControllerTests {
 		franklin3.setCity("Madison");
 		franklin3.setTelephone("6085551025");
 
-		// Simulate page 2 of filtered results (total 7 items across pages, page size 5, showing page 2 with 2 items)
-		Page<Owner> page2Results = new PageImpl<>(List.of(franklin3),
-				PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 1)))
+		// Simulate page 2 of filtered results (total 7 items across pages, page size 5,
+		// showing page 2 with 2 items)
+		Page<Owner> page2Results = new PageImpl<>(List.of(franklin3), PageRequest.of(1, 5), 7);
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2Results);
 
 		mockMvc.perform(get("/owners?page=2").param("lastName", "Franklin"))
@@ -216,8 +214,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(1)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 
 		// Verify the repository was called with "Franklin" filter even on page 2
 		verify(this.owners).findByLastNameStartingWith(eq("Franklin"),
@@ -259,8 +256,7 @@ class OwnerControllerTests {
 
 		List<Owner> page1Content = List.of(george, f2, f3, f4, f5);
 		Page<Owner> page1 = new PageImpl<>(page1Content, PageRequest.of(0, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 0)))
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 0)))
 			.thenReturn(page1);
 
 		// Assert page 1 returns filtered results with correct pagination metadata
@@ -272,8 +268,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(5)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 
 		// Page 2: remaining 2 Franklins
 		Owner f6 = new Owner();
@@ -293,8 +288,7 @@ class OwnerControllerTests {
 
 		List<Owner> page2Content = List.of(f6, f7);
 		Page<Owner> page2 = new PageImpl<>(page2Content, PageRequest.of(1, 5), 7);
-		when(this.owners.findByLastNameStartingWith(eq("Franklin"),
-				argThat(pageable -> pageable.getPageNumber() == 1)))
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), argThat(pageable -> pageable.getPageNumber() == 1)))
 			.thenReturn(page2);
 
 		// Assert page 2 still uses the same filter and returns correct results
@@ -306,8 +300,7 @@ class OwnerControllerTests {
 			.andExpect(model().attribute("totalPages", 2))
 			.andExpect(model().attribute("totalItems", 7L))
 			.andExpect(model().attribute("listOwners", hasSize(2)))
-			.andExpect(model().attribute("listOwners",
-					everyItem(hasProperty("lastName", is("Franklin")))));
+			.andExpect(model().attribute("listOwners", everyItem(hasProperty("lastName", is("Franklin")))));
 	}
 
 	@Test
@@ -356,7 +349,8 @@ class OwnerControllerTests {
 			.andExpect(view().name("owners/ownersList"))
 			// Verify all expected model attributes are present
 			.andExpect(model().attributeExists("lastName", "currentPage", "totalPages", "totalItems", "listOwners"))
-			// Verify filter value is the search term, available for template pagination links
+			// Verify filter value is the search term, available for template pagination
+			// links
 			.andExpect(model().attribute("lastName", "Fr"))
 			.andExpect(model().attribute("currentPage", 1))
 			.andExpect(model().attribute("totalPages", 1))

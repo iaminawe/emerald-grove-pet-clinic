@@ -20,6 +20,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repository class for <code>Owner</code> domain objects. All method names are compliant
@@ -43,6 +45,23 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 * found)
 	 */
 	Page<Owner> findByLastNameStartingWith(String lastName, Pageable pageable);
+
+	/**
+	 * Retrieve {@link Owner}s from the data store by any combination of last name,
+	 * telephone, and city. Each filter is only applied when its parameter is non-empty.
+	 * When all parameters are empty, all owners are returned (same as a parameterless
+	 * search).
+	 * @param lastName Value to search for (prefix match, case-insensitive)
+	 * @param telephone Exact telephone number to match (only applied when non-empty)
+	 * @param city City substring to match (case-insensitive, only applied when non-empty)
+	 * @return a {@link Page} of matching {@link Owner}s (or an empty Page if none found)
+	 */
+	@Query("SELECT DISTINCT owner FROM Owner owner LEFT JOIN FETCH owner.pets "
+			+ "WHERE (:lastName IS NULL OR LOWER(owner.lastName) LIKE LOWER(CONCAT(:lastName, '%'))) "
+			+ "AND (:telephone = '' OR owner.telephone = :telephone) "
+			+ "AND (:city = '' OR LOWER(owner.city) LIKE LOWER(CONCAT('%', :city, '%')))")
+	Page<Owner> findByLastNameAndTelephoneAndCity(@Param("lastName") String lastName,
+			@Param("telephone") String telephone, @Param("city") String city, Pageable pageable);
 
 	/**
 	 * Retrieve an {@link Owner} from the data store by id.

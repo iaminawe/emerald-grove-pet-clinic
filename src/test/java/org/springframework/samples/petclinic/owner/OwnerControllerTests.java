@@ -143,7 +143,50 @@ class OwnerControllerTests {
 	void testProcessFindFormSuccess() throws Exception {
 		Page<Owner> tasks = new PageImpl<>(List.of(george(), new Owner()));
 		when(this.owners.findByLastNameStartingWith(anyString(), any(Pageable.class))).thenReturn(tasks);
-		mockMvc.perform(get("/owners?page=1")).andExpect(status().isOk()).andExpect(view().name("owners/ownersList"));
+		mockMvc.perform(get("/owners?page=1"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("owners/ownersList"))
+			.andExpect(model().attribute("lastName", ""));
+	}
+
+	@Test
+	void testProcessFindFormWithLastNameFilterReturnsMultipleOwners() throws Exception {
+		Owner george = george();
+		Owner george2 = new Owner();
+		george2.setId(2);
+		george2.setFirstName("George2");
+		george2.setLastName("Franklin");
+		george2.setAddress("111 W. Liberty St.");
+		george2.setCity("Madison");
+		george2.setTelephone("6085551024");
+
+		Page<Owner> tasks = new PageImpl<>(List.of(george, george2));
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class))).thenReturn(tasks);
+		mockMvc.perform(get("/owners?page=1").param("lastName", "Franklin"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("owners/ownersList"))
+			.andExpect(model().attribute("lastName", "Franklin"));
+	}
+
+	@Test
+	void testProcessFindFormFilteredPaginationPage2() throws Exception {
+		Owner george = george();
+		Owner george2 = new Owner();
+		george2.setId(2);
+		george2.setFirstName("George2");
+		george2.setLastName("Franklin");
+		george2.setAddress("111 W. Liberty St.");
+		george2.setCity("Madison");
+		george2.setTelephone("6085551024");
+
+		Page<Owner> tasks = new PageImpl<>(List.of(george, george2));
+		when(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class))).thenReturn(tasks);
+		mockMvc.perform(get("/owners?page=2").param("lastName", "Franklin"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("owners/ownersList"))
+			.andExpect(model().attribute("lastName", "Franklin"))
+			.andExpect(model().attributeExists("currentPage"))
+			.andExpect(model().attribute("currentPage", 2));
 	}
 
 	@Test

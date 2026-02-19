@@ -78,11 +78,13 @@ class UpcomingVisitsControllerTests {
 		pet.setType(type);
 		pet.setBirthDate(LocalDate.of(2020, 1, 1));
 		owner.addPet(pet);
+		pet.setOwner(owner);
 
 		Visit visit = new Visit();
 		visit.setId(id);
 		visit.setDate(date);
 		visit.setDescription(description);
+		visit.setPet(pet);
 		pet.addVisit(visit);
 
 		return visit;

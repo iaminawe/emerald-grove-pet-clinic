@@ -100,8 +100,18 @@ class OwnerController {
 			lastName = ""; // empty string signifies broadest possible search
 		}
 
-		// find owners by last name
-		Page<Owner> ownersResults = findPaginatedForOwnersLastName(page, lastName);
+		// extract and normalize telephone and city parameters
+		String telephone = (owner.getTelephone() != null) ? owner.getTelephone().trim() : "";
+		String city = (owner.getCity() != null) ? owner.getCity().trim() : "";
+
+		// validate telephone: must contain only digits when provided
+		if (!telephone.isEmpty() && !telephone.matches("^[0-9]+$")) {
+			result.rejectValue("telephone", "invalid", "Telephone must contain only numeric characters");
+			return "owners/findOwners";
+		}
+
+		// find owners by last name, telephone, and city
+		Page<Owner> ownersResults = findPaginatedForOwners(page, lastName, telephone, city);
 		if (ownersResults.isEmpty()) {
 			// no owners found
 			result.rejectValue("lastName", "notFound", "not found");
@@ -131,6 +141,12 @@ class OwnerController {
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return owners.findByLastNameStartingWith(lastname, pageable);
+	}
+
+	private Page<Owner> findPaginatedForOwners(int page, String lastName, String telephone, String city) {
+		int pageSize = 5;
+		Pageable pageable = PageRequest.of(page - 1, pageSize);
+		return owners.findByLastNameAndTelephoneAndCity(lastName, telephone, city, pageable);
 	}
 
 	@GetMapping("/owners/{ownerId}/edit")

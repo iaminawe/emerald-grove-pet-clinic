@@ -427,6 +427,40 @@ hr {
   background-color: #1E2327;
 }
 
+.liatrio-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--liatrio-space-3);
+  margin-bottom: var(--liatrio-space-4);
+}
+
+.liatrio-filter-bar label {
+  color: #f8f9fa;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.liatrio-filter-select {
+  background: $spring-brown;
+  border: 1px solid #333333;
+  color: #f8f9fa;
+  border-radius: var(--liatrio-radius-sm);
+  padding: 6px 12px;
+  min-width: 180px;
+  cursor: pointer;
+
+  &:focus {
+    border-color: $spring-green;
+    box-shadow: 0 0 0 0.2rem rgba(36, 174, 29, 0.2);
+    outline: none;
+  }
+
+  option {
+    background: $spring-brown;
+    color: #f8f9fa;
+  }
+}
+
 .liatrio-pagination {
   margin-top: var(--liatrio-space-4);
   padding: var(--liatrio-space-3) var(--liatrio-space-4);

@@ -234,10 +234,9 @@ class PetControllerTests {
 
 		@Test
 		void testProcessDeleteSecondPet() throws Exception {
-			// Delete the second pet (doggy, id = TEST_PET_ID + 1) to verify correct pet ID is used
-			mockMvc
-				.perform(
-						post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID + 1))
+			// Delete the second pet (doggy, id = TEST_PET_ID + 1) to verify correct pet
+			// ID is used
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID + 1))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/owners/{ownerId}"))
 				.andExpect(flash().attribute("message", is("Pet has been deleted")));
